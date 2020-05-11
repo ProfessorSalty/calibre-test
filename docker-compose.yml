@@ -50,8 +50,8 @@ services:
             - TZ
         volumes:
             - ./configs/openldap/seeds:/container/service/slapd/assets/config/bootstrap/ldif/custom
-            - ${SERVICES_ROOT}/${OPENLDAP_ROOT:-openldap}/db:/var/lib/ldap
-            - ${SERVICES_ROOT}/${OPENLDAP_ROOT:-openldap}/config:/etc/ldap/slapd.d
+            - ./data/openldap/db:/var/lib/ldap
+            - ./data/openldap/config:/etc/ldap/slapd.d
         ports:
             - "389:389"
             - "636:636"
@@ -101,11 +101,11 @@ services:
         expose:
             - 8083
         volumes:
-            - ${BOOKS_ROOT}:/books
-            - ${SERVICES_ROOT}/${CALIBRE_WEB_ROOT:-calibre-web}/config:/calibre-web/config
-            - ${SERVICES_ROOT}/${CALIBRE_WEB_ROOT:-calibre-web}/kindlegen:/calibre-web/kindlegen
-            - ${SERVICES_ROOT}/${CALIBRE_WEB_ROOT:-calibre-web}/app:/calibre-web/app
-            - ${SERVICES_ROOT}/${CALIBRE_WEB_ROOT:-calibre-web}/db:/calibre-web/db
+            - ./books:/books
+            - ./data/calibre-web/config:/calibre-web/config
+            - ./data/calibre-web/kindlegen:/calibre-web/kindlegen
+            - ./data/calibre-web/app:/calibre-web/app
+            - ./data/calibre-web/db:/calibre-web/db
         labels:
             - "traefik.http.routers.calibre-web.rule=Host(`library.${ROOT_DOMAIN}`)"
             - "traefik.http.routers.calibre-web.entrypoints=web"
