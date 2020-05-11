@@ -84,7 +84,6 @@ services:
         labels:
             - "traefik.http.routers.phpldapadmin.rule=Host(`admin.${ROOT_DOMAIN}`)"
             - "traefik.http.routers.phpldapadmin.entrypoints=web"
-            - "traefik.http.routers.phpldapadmin.middlewares=allowFrames@file"
 
     ###############################
     #        Calibre              #
