@@ -82,7 +82,6 @@ services:
                 ]
                 }]}]"
         labels:
-            - "traefik.enable=true"
             - "traefik.http.routers.phpldapadmin.rule=Host(`admin.${ROOT_DOMAIN}`)"
             - "traefik.http.routers.phpldapadmin.entrypoints=secure"
             - "traefik.http.routers.phpldapadmin.middlewares=allowFrames@file"
@@ -110,7 +109,6 @@ services:
             - ${SERVICES_ROOT}/${CALIBRE_WEB_ROOT:-calibre-web}/app:/calibre-web/app
             - ${SERVICES_ROOT}/${CALIBRE_WEB_ROOT:-calibre-web}/db:/calibre-web/db
         labels:
-            - "traefik.enable=true"
             - "traefik.http.routers.calibre-web.rule=Host(`library.${ROOT_DOMAIN}`)"
             - "traefik.http.routers.calibre-web.entrypoints=secure"
             - "traefik.http.services.calibre-web.loadbalancer.server.port=8083"
