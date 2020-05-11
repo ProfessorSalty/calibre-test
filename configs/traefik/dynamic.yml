@@ -2,6 +2,6 @@ http:
   routers:
     traefik:
       entryPoints: 
-        - secure
+        - web
       rule: Host(`dashboard.{{ env "ROOT_DOMAIN" }}`)
       service: api@internal

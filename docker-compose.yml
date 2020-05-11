@@ -83,7 +83,7 @@ services:
                 }]}]"
         labels:
             - "traefik.http.routers.phpldapadmin.rule=Host(`admin.${ROOT_DOMAIN}`)"
-            - "traefik.http.routers.phpldapadmin.entrypoints=secure"
+            - "traefik.http.routers.phpldapadmin.entrypoints=web"
             - "traefik.http.routers.phpldapadmin.middlewares=allowFrames@file"
 
     ###############################
@@ -109,5 +109,5 @@ services:
             - ${SERVICES_ROOT}/${CALIBRE_WEB_ROOT:-calibre-web}/db:/calibre-web/db
         labels:
             - "traefik.http.routers.calibre-web.rule=Host(`library.${ROOT_DOMAIN}`)"
-            - "traefik.http.routers.calibre-web.entrypoints=secure"
+            - "traefik.http.routers.calibre-web.entrypoints=web"
             - "traefik.http.services.calibre-web.loadbalancer.server.port=8083"
