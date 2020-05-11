@@ -1,0 +1,62 @@
+dn: ou=groups,dc=example,dc=com
+changetype: add
+objectclass:organizationalunit
+ou: groups
+description: Top-level groups 
+
+# everybody
+dn: cn=everybody,ou=groups,dc=example,dc=com
+changetype: add
+objectclass: groupofuniquenames
+cn: everybody
+description: Things that everyone has access to
+uniquemember: uid=test,ou=people,dc=example,dc=com
+
+# administrator
+dn: cn=administrator,ou=groups,dc=example,dc=com
+changetype: add
+objectclass: groupofuniquenames
+cn: administrator
+description: Local network access only. Stuff that
+ handles the inner workings of the services.
+uniquemember: uid=test,ou=people,dc=example,dc=com
+
+# media
+dn: cn=media,ou=groups,dc=example,dc=com
+changetype: add
+objectclass: groupofuniquenames
+cn: media
+description: Streaming
+uniquemember: uid=test,ou=people,dc=example,dc=com
+
+# groupware
+dn: cn=groupware,ou=groups,dc=example,dc=com
+changetype: add
+objectclass: groupofuniquenames
+cn: groupware
+description: Email, file syncing
+uniquemember: uid=test,ou=people,dc=example,dc=com
+
+# dev
+dn: cn=dev,ou=groups,dc=example,dc=com
+changetype: add
+objectclass: groupofuniquenames
+cn: dev
+description: Development tools
+uniquemember: uid=test,ou=people,dc=example,dc=com
+
+# downloads
+dn: cn=downloads,ou=groups,dc=example,dc=com
+changetype: add
+objectclass: groupofuniquenames
+cn: downloads
+description: Search for and initiate downloads to server
+uniquemember: uid=test,ou=people,dc=example,dc=com
+
+# social
+dn: cn=social,ou=groups,dc=example,dc=com
+changetype: add
+objectclass: groupofuniquenames
+cn: social
+description: Fedeverse and chat
+uniquemember: uid=test,ou=people,dc=example,dc=com

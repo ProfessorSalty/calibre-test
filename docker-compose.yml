@@ -1,0 +1,116 @@
+version: "3.5"
+
+networks:
+    proxy:
+        name: proxy
+
+services:
+    ###############################
+    #           Traefik           #
+    ###############################
+
+    traefik:
+        image: traefik:latest
+        container_name: traefik-calibre-test
+        restart: unless-stopped
+        environment:
+            - TZ
+        env_file:
+            - .env
+        labels:
+            - "traefik.enable=true"
+        networks:
+            - proxy
+        ports:
+            - "${TRAEFIK_HTTP_PORT:-80}:80"
+        volumes:
+            - "/var/run/docker.sock:/var/run/docker.sock:ro"
+            - ./configs/traefik/static.yml:/traefik.yml
+            - ./configs/traefik/dynamic.yml:/dynamic.yml
+
+    ###############################
+    #           OpenLDAP          #
+    ###############################
+
+    openldap:
+        image: osixia/openldap:1.3.0
+        container_name: openldap-calibre-test
+        restart: unless-stopped
+        environment:
+            - LDAP_RFC2307BIS_SCHEMA=true
+            - LDAP_ORGANISATION
+            - LDAP_DOMAIN=${ROOT_DOMAIN}
+            - LDAP_ADMIN_PASSWORD
+            - LDAP_CONFIG_PASSWORD=test
+            - LDAP_BASE_DN=${LDAP_LOGIN_BASE}
+            - LDAP_READONLY_USER=true
+            - LDAP_READONLY_USER_USERNAME=readonly
+            - LDAP_READONLY_USER_PASSWORD=test
+            - LDAP_TLS_ENFORCE=false
+            - TZ
+        volumes:
+            - ./configs/openldap/seeds:/container/service/slapd/assets/config/bootstrap/ldif/custom
+            - ${SERVICES_ROOT}/${OPENLDAP_ROOT:-openldap}/db:/var/lib/ldap
+            - ${SERVICES_ROOT}/${OPENLDAP_ROOT:-openldap}/config:/etc/ldap/slapd.d
+        ports:
+            - "389:389"
+            - "636:636"
+        networks:
+            - proxy
+        command: --copy-service
+
+    ###############################
+    #       PHPLDAPAdmin          #
+    ###############################
+
+    phpldapadmin:
+        image: osixia/phpldapadmin
+        container_name: phpldapadmin-calibre-test
+        restart: unless-stopped
+        hostname: admin.${ROOT_DOMAIN}
+        networks:
+            - proxy
+        environment:
+            PHPLDAPADMIN_HTTPS: "false"
+            PHPLDAPADMIN_LDAP_HOSTS: "#PYTHON2BASH:[
+                {'openldap': [
+                {'server': [{'tls': False}]},
+                {'login': [
+                {'bind_id': 'cn=admin,${LDAP_LOGIN_BASE}'},
+                {'bind_pass': '${LDAP_ADMIN_PASSWORD}'},
+                {'attr': 'cn'}
+                ]
+                }]}]"
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.phpldapadmin.rule=Host(`admin.${ROOT_DOMAIN}`)"
+            - "traefik.http.routers.phpldapadmin.entrypoints=secure"
+            - "traefik.http.routers.phpldapadmin.middlewares=allowFrames@file"
+
+    ###############################
+    #        Calibre              #
+    ###############################
+    calibre-web:
+        image: technosoft2000/calibre-web
+        container_name: calibre-web-test
+        restart: unless-stopped
+        networks:
+            - proxy
+        environment:
+            - PGID=1000
+            - PUID=1000
+            - USE_CONFIG_DIR=true
+        expose:
+            - 8083
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+            - ${BOOKS_ROOT}:/books
+            - ${SERVICES_ROOT}/${CALIBRE_WEB_ROOT:-calibre-web}/config:/calibre-web/config
+            - ${SERVICES_ROOT}/${CALIBRE_WEB_ROOT:-calibre-web}/kindlegen:/calibre-web/kindlegen
+            - ${SERVICES_ROOT}/${CALIBRE_WEB_ROOT:-calibre-web}/app:/calibre-web/app
+            - ${SERVICES_ROOT}/${CALIBRE_WEB_ROOT:-calibre-web}/db:/calibre-web/db
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.calibre-web.rule=Host(`library.${ROOT_DOMAIN}`)"
+            - "traefik.http.routers.calibre-web.entrypoints=secure"
+            - "traefik.http.services.calibre-web.loadbalancer.server.port=8083"

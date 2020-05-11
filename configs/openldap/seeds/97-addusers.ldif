@@ -1,0 +1,20 @@
+dn: ou=people,dc=example,dc=com
+changetype: add
+objectClass: organizationalunit
+ou: people
+description: User accounts
+
+dn: uid=test,ou=people,dc=example,dc=com
+changetype: add
+uid: test
+displayName:test
+cn: test user
+objectClass: top
+objectClass: posixAccount
+objectClass: inetOrgPerson
+loginShell: /bin/bash
+homeDirectory: /home/testuser
+uidNumber: 14583103
+gidNumber: 14564101
+userPassword: {SSHA}2nosEIV37ulSmFUUW+i7xCmbJb3Q6x2k
+mail: testuser@example.com
