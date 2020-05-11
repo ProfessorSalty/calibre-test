@@ -102,7 +102,6 @@ services:
         expose:
             - 8083
         volumes:
-            - /etc/localtime:/etc/localtime:ro
             - ${BOOKS_ROOT}:/books
             - ${SERVICES_ROOT}/${CALIBRE_WEB_ROOT:-calibre-web}/config:/calibre-web/config
             - ${SERVICES_ROOT}/${CALIBRE_WEB_ROOT:-calibre-web}/kindlegen:/calibre-web/kindlegen
